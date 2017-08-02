@@ -21,10 +21,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by aakashb on 8/1/17.
- */
-
 
 public class FragmentMusicSource {
 
@@ -66,20 +62,18 @@ public class FragmentMusicSource {
 
     public void getMusic(MusicListener musicListener) {
         final MusicListener musicListenerInternal = musicListener;
-        // URL for requesting articles from Wikipedia. This requests N random articles, with a short
-        // text extract (rather than the whole article text), with a main thumbnail image of size M,
-        // and with metadata including a link to the wikipedia article itself.
-        String url = "https://itunes.apple.com/search?term=beyonce&entity=musicTrack";
+
+        String url = "https://itunes.apple.com/search?term=nirvana&entity=musicTrack";
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            Log.i("Data",response.toString());
+
                             List<Music> musicList = new ArrayList<Music>();
                             // Get the map of articles, keyed by article id.
                             JSONArray jsonobjectarray = response.getJSONArray("results");
-                            //JSONObject articlesObj = response.getJSONObject("query").getJSONObject("pages");
+                            Log.i("JSONVAI",jsonobjectarray.toString());
                             for(int i = 0; i<jsonobjectarray.length(); i++){
                                 JSONObject jsonobject = jsonobjectarray.getJSONObject(i);
                                 Music music = new Music(jsonobject);

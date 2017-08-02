@@ -20,9 +20,6 @@ import com.android.volley.toolbox.NetworkImageView;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by aakashb on 7/31/17.
- */
 
 public class ItunesMusicListFragment extends Fragment {
     private ListView mListView;
@@ -45,7 +42,8 @@ public class ItunesMusicListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_itunesarticlelist,container,false);
 
         //setting up the SwipeRefreshLayout to reload when we swipe
-
+        mListView = (ListView) v.findViewById(R.id.list_view);
+        mMusicAdapter = new MusicAdapter(getActivity());
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swiperefresh);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -56,8 +54,7 @@ public class ItunesMusicListFragment extends Fragment {
 
 
         //Setting up the list view
-        mListView = (ListView) v.findViewById(R.id.list_view);
-        mMusicAdapter = new MusicAdapter(getActivity());
+
         mListView.setAdapter( mMusicAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
@@ -66,7 +63,7 @@ public class ItunesMusicListFragment extends Fragment {
 
                 Music music = (Music) parent.getAdapter().getItem(position);
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(music.getURLString()));
+                intent.setData(Uri.parse(music.getTrackViewUrl()));
                 startActivity(intent);
             }
 
@@ -85,8 +82,10 @@ public class ItunesMusicListFragment extends Fragment {
     }
 
     private void refreshMusic() {
+
         FragmentMusicSource.get(getContext()).getMusic(new FragmentMusicSource.MusicListener(){
             public void onMusicResponse(List<Music> musicList){
+                //Log.i("Checking",musicList.toString());
                 mMusics = musicList;
                 mSwipeRefreshLayout.setRefreshing(false);
                 mMusicAdapter.setItems(musicList);
@@ -134,6 +133,10 @@ public class ItunesMusicListFragment extends Fragment {
             final Music music = mDataSource.get(position);
             View rowView = mInflater.inflate(R.layout.list_item_music,parent, false);
 
+            imageView = (NetworkImageView) rowView.findViewById(R.id.thumbnail);
+            ImageLoader loader = FragmentMusicSource.get(getContext()).getImageLoader();
+            imageView.setImageUrl(music.getArtWOrkUrl100(), loader);
+
             mSongTitleView = (TextView)rowView.findViewById(R.id.track);
             mSongTitleView.setText(music.getTrackName());
 
@@ -143,9 +146,7 @@ public class ItunesMusicListFragment extends Fragment {
             mTextView = (TextView)rowView.findViewById(R.id.collection);
             mTextView.setText(music.getCollectionName());
 
-            imageView = (NetworkImageView) rowView.findViewById(R.id.thumbnail);
-            ImageLoader loader = FragmentMusicSource.get(getContext()).getImageLoader();
-            imageView.setImageUrl(music.getArtWOrkUrl60(), loader);
+
 
             return rowView;
         }

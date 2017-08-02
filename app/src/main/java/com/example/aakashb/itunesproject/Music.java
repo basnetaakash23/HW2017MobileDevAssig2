@@ -13,7 +13,7 @@ public class Music {
     protected String mArtistName;
     protected String mCollectionName;
     protected String mPreviewUrl;
-    protected String mArtWorkUrl60;
+    protected String mArtWorkUrl100;
     protected String mTrackViewUrl;
 
     public Music(JSONObject musicObject) {
@@ -23,7 +23,7 @@ public class Music {
             mTrackName = musicObject.getString("trackName");
             mArtistName = musicObject.getString("artistName");
             mCollectionName = musicObject.getString("collectionName");
-            mArtWorkUrl60 = musicObject.getString("artWorkUrl60");
+            mArtWorkUrl100 = musicObject.getString("artworkUrl100");
             mTrackViewUrl = musicObject.getString("trackViewUrl");
             mPreviewUrl = musicObject.getString("previewUrl");
 
@@ -51,8 +51,8 @@ public class Music {
         return mCollectionName;
     }
 
-    public String getArtWOrkUrl60(){
-        return mArtWorkUrl60;
+    public String getArtWOrkUrl100(){
+        return mArtWorkUrl100;
     }
 
     public String getTrackViewUrl(){
