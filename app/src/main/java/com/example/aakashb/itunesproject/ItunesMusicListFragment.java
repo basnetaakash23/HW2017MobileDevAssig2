@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -107,9 +106,11 @@ public class ItunesMusicListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Music music = (Music) parent.getAdapter().getItem(position);
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(music.getTrackViewUrl()));
-                startActivity(intent);
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "This track is good");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, music.getTrackViewUrl());
+                startActivity(Intent.createChooser(shareIntent, "Share Link using"));
             }
 
         });
@@ -177,11 +178,12 @@ public class ItunesMusicListFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             final Music music = mDataSource.get(position);
             View rowView = mInflater.inflate(R.layout.list_item_music,parent, false);
+            mImageButton = (ImageButton) rowView.findViewById(R.id.play_Button);
 
             boolean isPlaying = mMediaPlayer.isPlaying() &&
                     mCurrentlyPlayingUrl.equals(music.getPreviewUrl());
             // Here, add code to set the play/pause button icon based on isPlaying
-            mImageButton = (ImageButton) rowView.findViewById(R.id.playButton);
+
             if(isPlaying){
 
                     mImageButton.setBackgroundResource(R.mipmap.ic_launcher);
