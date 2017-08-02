@@ -1,16 +1,14 @@
 package com.example.aakashb.itunesproject;
 
-import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 
 
@@ -26,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu1, menu);
+        inflater.inflate(R.menu.menu, menu);
         return true;
 
     }
@@ -34,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem menu){
         final EditText mEditText = new EditText(this);
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this)
+        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
                 .setTitle("Search for the tracks")
                 .setView(mEditText)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -51,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         alertDialog.show();
         return true;
-        
+
 
 
     }

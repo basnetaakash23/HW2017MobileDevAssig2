@@ -2,6 +2,8 @@ package com.example.aakashb.itunesproject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,12 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,14 +33,55 @@ public class ItunesMusicListFragment extends Fragment {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private NetworkImageView imageView;
     private List<Music> mMusics;
+    private MediaPlayer mMediaPlayer;
+    private String mCurrentlyPlayingUrl;
+    private ImageButton mImageButton;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
 
     }
+
+    private void clickedAudioURL(String url) {
+        if (mMediaPlayer.isPlaying()) {
+            if (mCurrentlyPlayingUrl.equals(url)) {
+                mMediaPlayer.stop();
+                mMusicAdapter.notifyDataSetChanged();
+                return;
+            }
+        }
+
+        mCurrentlyPlayingUrl = url;
+        mMediaPlayer.reset();
+        try {
+            mMediaPlayer.setDataSource(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mMediaPlayer.prepareAsync(); // might take long! (for buffering, etc)
+        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.start();
+                mMusicAdapter.notifyDataSetChanged();
+            }
+        });
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mMusicAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState){
         View v = inflater.inflate(R.layout.fragment_itunesarticlelist,container,false);
@@ -132,6 +177,24 @@ public class ItunesMusicListFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             final Music music = mDataSource.get(position);
             View rowView = mInflater.inflate(R.layout.list_item_music,parent, false);
+
+            boolean isPlaying = mMediaPlayer.isPlaying() &&
+                    mCurrentlyPlayingUrl.equals(music.getPreviewUrl());
+            // Here, add code to set the play/pause button icon based on isPlaying
+            mImageButton = (ImageButton) rowView.findViewById(R.id.playButton);
+            if(isPlaying){
+
+                    mImageButton.setBackgroundResource(R.mipmap.ic_launcher);
+            }else{
+                mImageButton.setBackgroundResource(R.mipmap.ic_launcher_round);
+            }
+            mImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clickedAudioURL(music.getPreviewUrl());
+                }
+            });
+
 
             imageView = (NetworkImageView) rowView.findViewById(R.id.thumbnail);
             ImageLoader loader = FragmentMusicSource.get(getContext()).getImageLoader();

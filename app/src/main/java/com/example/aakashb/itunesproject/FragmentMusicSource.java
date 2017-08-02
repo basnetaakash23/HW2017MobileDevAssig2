@@ -23,6 +23,16 @@ import java.util.List;
 
 
 public class FragmentMusicSource {
+    private static String mQuery;
+
+    public static void setQuery(String query) {
+        mQuery = query;
+
+    }
+
+    public static String getQuery(){
+        return mQuery;
+    }
 
     public interface MusicListener {
         void onMusicResponse(List<Music> musicList);
@@ -63,7 +73,7 @@ public class FragmentMusicSource {
     public void getMusic(MusicListener musicListener) {
         final MusicListener musicListenerInternal = musicListener;
 
-        String url = "https://itunes.apple.com/search?term=nirvana&entity=musicTrack";
+        String url = "https://itunes.apple.com/search?term="+ mQuery + "&entity=musicTrack";
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
